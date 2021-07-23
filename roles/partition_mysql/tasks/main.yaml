@@ -1,0 +1,63 @@
+---
+
+- name: installing sudo
+  apt: name=sudo state=present
+  when: config_lvm and ansible_os_family == "Debian"
+
+- name: installing xfsprogs
+  apt: name=xfsprogs state=present
+  when: config_lvm and ansible_os_family == "Debian"
+
+- name: installing lvm2
+  apt: name=lvm2 state=present
+  when: config_lvm and ansible_os_family == "Debian"
+
+- name: installing lvm2
+  yum: name=system-storage-manager state=present
+  when: config_lvm and ansible_os_family == "RedHat"
+
+- name: installing scsitools
+  apt: name=scsitools state=present
+  when: config_lvm and ansible_os_family == "Debian"
+
+- name: installing sg3_utils
+  yum: name=sg3_utils state=present
+  when: config_lvm and ansible_os_family == "RedHat"
+
+- name: rescanning for new disks
+  command: /sbin/rescan-scsi-bus
+  when: config_lvm and ansible_os_family == "Debian"
+
+- name: rescanning for new disks
+  command: /usr/bin/rescan-scsi-bus.sh
+  when: config_lvm and ansible_os_family == "RedHat"
+
+- name: Create Partition for LVM file system
+  shell:
+    /bin/echo -e "n\np\n1\n\n\nt\n8e\nw" | sudo fdisk "{{ disk_mysql }}"
+  when: create_mysql
+
+- name: creating new LVM volume group {{ create_vgname }}
+  lvg: vg="{{ create_vgname }}" pvs="{{ disk_mysql }}1" state=present
+  when: create_mysql
+
+- name: creating new LVM logical volume {{ create_lvname }}
+  lvol: vg="{{ create_vgname }}" lv="{{ create_lvname }}" size=100%FREE
+  when: create_mysql
+
+- name: creating new filesystem on new LVM logical volume
+  filesystem: fstype="{{ filesystem }}" dev="/dev/{{ create_vgname }}/{{ create_lvname }}"
+  when: create_mysql
+
+- name: Mount fs
+  mount:
+    path: "{{ new_mntp }}"
+    src: "/dev/{{ create_vgname }}/{{ create_lvname }}"
+    fstype: "{{ filesystem }}"
+    opts: 'nobarrier,noatime,nodiratime'
+    state: present
+  when: create_mysql
+
+- name: mounting new filesystem
+  mount: name="{{ new_mntp }}" src="/dev/{{ create_vgname }}/{{ create_lvname }}" fstype="{{ filesystem }}" state=mounted
+  when: create_mysql

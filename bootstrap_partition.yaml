@@ -1,0 +1,10 @@
+---
+
+- hosts:
+    mysql-srv01
+  roles:
+  - partition_mysql
+
+# run cmd
+# ansible-playbook -l mysql-srv01 bootstrap_part.yml -e "disk_mysql=/dev/sdb" -e "create_mysql=true"
+
