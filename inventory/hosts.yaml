@@ -1,0 +1,31 @@
+#example inventory in yaml
+---
+all:
+  hosts:
+  children:
+    xen:
+      hosts:
+        xen01:
+          ansibe_user: root
+          ansible_host: 192.168.12.116
+        xen02:
+          ansibe_user: root
+          ansible_host: 192.168.12.117
+    pve:
+      hosts:
+        pve01:
+          ansible_host: 10.11.5.201
+          ansible_user: root
+          ansible_ssh_private_key_file: ~/.ssh/id_ansible
+          ansible_python_interpreter: /usr/bin/python3
+        pve02:
+          ansible_host: 10.11.5.202
+          ansible_user: root
+          ansible_ssh_private_key_file: ~/.ssh/id_ansible
+          ansible_python_interpreter: /usr/bin/python3
+        pve03:
+          ansible_host: 10.11.5.203
+          ansible_user: root
+          ansible_ssh_private_key_file: ~/.ssh/id_ansible
+          ansible_python_interpreter: /usr/bin/python3
+
