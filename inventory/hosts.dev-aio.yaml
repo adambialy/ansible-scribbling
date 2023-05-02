@@ -1,0 +1,40 @@
+---
+all:
+  hosts:
+  children:
+    aio:
+      vars:
+        vips:
+          - name: vip1
+            vip_ip: 192.168.69.241
+            vip_prefer: aio-01-dev
+            vip_int: ens192
+            vip_service: squid
+          - name: vip2
+            vip_ip: 192.168.69.242
+            vip_prefer: aio-02-dev
+            vip_int: ens192
+            vip_service: nexus3
+          - name: vip3
+            vip_ip: 192.168.69.243
+            vip_prefer: aio-01-dev
+            vip_int: ens192
+            vip_service: ldap
+          - name: vip4
+            vip_ip: 192.168.69.244
+            vip_prefer: aio-02-dev
+            vip_int: ens192
+            vip_service: something
+      hosts:
+        aio-01-dev:
+          ansibe_user: root
+          ansible_host: 192.168.69.67
+          ansible_python_interpreter: /usr/bin/python3
+          ha_leader: True # this variable is used only to run crm pcs commands
+        aio-02-dev:
+          ansibe_user: root
+          ansible_host: 192.168.69.71
+          ansible_python_interpreter: /usr/bin/python3
+          corosync_bind_interface: ens192
+
+

@@ -1,0 +1,8 @@
+---
+
+- include_tasks: install.yaml
+- include_tasks: config-corosync.yaml
+
+
+
+
